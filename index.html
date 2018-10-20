@@ -1,0 +1,81 @@
+<html>
+  <head>
+    <title>3d Product Site</title>
+  </head>
+  <body>
+    <div id="app">
+    </div>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/97/three.js"></script>
+    <script src="./js/OBJLoader.js"></script>
+    <script src="./js/MTLLoader.js"></script>
+
+    <script type="text/babel">
+      // const products = [{ name: 'AllBirds Shoe' }];
+      //
+      // class App extends React.Component {
+      //   render() {
+      //     return (
+      //       <img src={"./models/AllBirds Shoe_thumbnail.png"} />
+      //     )
+      //   }
+      // }
+      //
+      // const app = document.querySelector('#app');
+      // ReactDOM.render(<App />, app);
+    </script>
+    <script>
+
+    let width = 500;
+    let height = 500;
+
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+
+    let renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width, height);
+    document.body.appendChild(renderer.domElement);
+
+    camera.position.z = 0;
+
+    let animate = () => {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+
+    animate();
+    var keyLight = new THREE.DirectionalLight(new THREE.Color('hsl(30, 100%, 75%)'), 1.0);
+    keyLight.position.set(-100, 0, 100);
+
+    var fillLight = new THREE.DirectionalLight(new THREE.Color('hsl(240, 100%, 75%)'), 0.75);
+    fillLight.position.set(100, 0, 100);
+
+    var backLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    backLight.position.set(100, 0, -100).normalize();
+
+    scene.add(keyLight);
+    scene.add(fillLight);
+    scene.add(backLight);
+
+    let mtlLoader = new THREE.MTLLoader();
+    mtlLoader.setTexturePath('./models/');
+    mtlLoader.setPath('./models/');
+    mtlLoader.load('AllBirds Shoe.mtl', (materials) => {
+      materials.preload();
+
+      let objLoader = new THREE.OBJLoader();
+      objLoader.setMaterials(materials);
+      objLoader.setPath('./models/');
+      objLoader.load('AllBirds Shoe.obj', (object) => {
+        scene.add(object);
+        object.position.y -= 20;
+        object.position.z -= 300;
+        object.rotation.x = -Math.PI / 3;
+        object.rotation.z = Math.PI / 3;
+      });
+    });
+    </script>
+  </body>
+</html>
